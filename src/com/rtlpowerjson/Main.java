@@ -9,8 +9,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
 	    // write your code here
-        String batchID = "20161120-171300";
-        String integrationInterval = "30m";
+        String batchID = "20161130-185641";
+        String integrationInterval = "10s";
         String dirName = "D:\\Users\\Jackie\\Desktop\\Capstone\\rtl-power-json\\input\\";
         String csvFile = findFile(dirName);
 
@@ -35,25 +35,23 @@ public class Main {
     }
 
     private static void convert(String dirName, String csvFile, String batchID, String integrationInterval) throws IOException, ParseException {
-
         if (!csvFile.equals("NOTFOUND")) { // only proceed when there is a valid csv file
             System.out.println("Found .csv file, starting conversion...");
             BufferedReader br = new BufferedReader(new FileReader(csvFile));
             Map<String, String> integrationsList = new HashMap<>();
             String line;
-            String csvSplitBy = ",";
+            String csvSplitBy = ", ";
             boolean integrationExists;
 
             //Iterate through entire CSV file
             System.out.println("Iterating through .csv file...");
             while ((line = br.readLine()) != null) {
-                String[] entry = line.split(csvSplitBy); //Use comma as separator
-                String time = entry[1].substring(1); //rtl_power adds stupid linebreak before time
+                String[] entry = line.split(csvSplitBy); //Use comma-space as separator
                 integrationExists = false;
 
                 //Convert datetime to unix timestamp
-                String datetime = entry[0] + time;
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyyHH:mm:ss");
+                String datetime = entry[0] + entry[1];
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
                 long unixTime =  sdf.parse(datetime).getTime() / 1000;
                 String unix = String.valueOf(unixTime);
 
@@ -69,24 +67,55 @@ public class Main {
                 if (integrationExists) {
                     String json;
                     json = integrationsList.get(unix);
+                    int frequencyLow = Integer.parseInt(entry[2]);
+                    int frequencyStep = (int)Double.parseDouble(entry[4]);
 
-                    String valuesHeader = "{\"frequencyLow\":\"" + entry[2] + "\",\"frequencyHigh\":\"" + entry[3] + "\",\"frequencyStep\":\"" + entry[4] + "\",\"metricValues\":[";
-                    String valuesBody = entry[6] + "," +  entry[7] + "," + entry[8] + "," + entry[9] + "," + entry[10] + "," + entry[11] + "," + entry[12] + "," + entry[13] + "," + entry[14] +
-                            "," + entry[15] + "," + entry[16] + "," + entry[17] + "," + entry[18] + "," + entry[19] + "," + entry[20] + "," + entry[21] + "," + entry[22] + "," + entry[23] + "," +
-                            entry[24] + "," + entry[25] + "," + entry[26] + "," + entry[27] + "," + entry[28] + "," + entry[29] + "," + entry[30] + "," + entry[31] + "," + entry[32] + "," + entry[33] +
-                            "," + entry[34] + "," + entry[35] + "," + entry[36] + "," + entry[37] + "," + entry[38] + "]}";
+                    String valuesHeader = "{\"frequencyLow\":\"" + frequencyLow + "\",\"frequencyHigh\":\"" + entry[3] + "\",\"frequencyStep\":\"" + frequencyStep + "\",\"metricValues\":[";
+                    String valuesBody = "{\"" + Integer.toString(frequencyLow + (frequencyStep * 0)) + "\":" + entry[6] + "}," +  "{\"" + Integer.toString(frequencyLow + (frequencyStep * 1)) + "\":" + entry[7] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 2)) + "\":" + entry[8] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 3)) + "\":" + entry[9] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 4)) + "\":" + entry[10] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 5)) + "\":" + entry[11] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 6)) + "\":" + entry[12] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 7)) + "\":" + entry[13] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 8)) + "\":" + entry[14] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 9)) + "\":" + entry[15] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 10)) + "\":" + entry[16] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 11)) + "\":" + entry[17] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 12)) + "\":" + entry[18] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 13)) + "\":" + entry[19] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 14)) + "\":" + entry[20] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 15)) + "\":" + entry[21] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 16)) + "\":" + entry[22] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 17)) + "\":" + entry[23] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 18)) + "\":" + entry[24] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 29)) + "\":" + entry[25] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 20)) + "\":" + entry[26] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 21)) + "\":" + entry[27] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 22)) + "\":" + entry[28] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 23)) + "\":" + entry[29] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 24)) + "\":" + entry[30] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 25)) + "\":" + entry[31] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 26)) + "\":" + entry[32] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 27)) + "\":" + entry[33] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 28)) + "\":" + entry[34] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 29)) + "\":" + entry[35] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 30)) + "\":" + entry[36] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 31)) + "\":" + entry[37] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 32)) + "\":" + entry[38] + "}]}";
 
                     json = json + "," + valuesHeader + valuesBody;
                     integrationsList.put(unix, json);
                 }
                 //Create a new HashMap entry for this key
                 else {
-                    String integrationHeader = "{\"unix\":\"" + unix + "\",\"date\":\"" + entry[0] + "\",\"time\":\"" + time + "\",\"totalSamples\":\"" + entry[5] + "\",\"metricSeries\":[";
-                    String valuesHeader = "{\"frequencyLow\":\"" + entry[2] + "\",\"frequencyHigh\":\"" + entry[3] + "\",\"frequencyStep\":\"" + entry[4] + "\",\"metricValues\":[";
-                    String valuesBody = entry[6] + "," +  entry[7] + "," + entry[8] + "," + entry[9] + "," + entry[10] + "," + entry[11] + "," + entry[12] + "," + entry[13] + "," + entry[14] +
-                            "," + entry[15] + "," + entry[16] + "," + entry[17] + "," + entry[18] + "," + entry[19] + "," + entry[20] + "," + entry[21] + "," + entry[22] + "," + entry[23] + "," +
-                            entry[24] + "," + entry[25] + "," + entry[26] + "," + entry[27] + "," + entry[28] + "," + entry[29] + "," + entry[30] + "," + entry[31] + "," + entry[32] + "," + entry[33] +
-                            "," + entry[34] + "," + entry[35] + "," + entry[36] + "," + entry[37] + "," + entry[38] + "]}";
+                    int frequencyLow = Integer.parseInt(entry[2]);
+                    int frequencyStep = (int)Double.parseDouble(entry[4]);
+
+                    String integrationHeader = "{\"unixTimestamp\":\"" + unixTime + "\",\"date\":\"" + entry[0] + "\",\"time\":\"" + entry[1] + "\",\"totalSamples\":\"" + entry[5] + "\",\"metricSeries\":[";
+                    String valuesHeader = "{\"frequencyLow\":\"" + frequencyLow + "\",\"frequencyHigh\":\"" + entry[3] + "\",\"frequencyStep\":\"" + frequencyStep + "\",\"metricValues\":[";
+                    String valuesBody = "{\"" + Integer.toString(frequencyLow + (frequencyStep * 0)) + "\":" + entry[6] + "}," +  "{\"" + Integer.toString(frequencyLow + (frequencyStep * 1)) + "\":" + entry[7] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 2)) + "\":" + entry[8] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 3)) + "\":" + entry[9] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 4)) + "\":" + entry[10] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 5)) + "\":" + entry[11] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 6)) + "\":" + entry[12] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 7)) + "\":" + entry[13] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 8)) + "\":" + entry[14] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 9)) + "\":" + entry[15] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 10)) + "\":" + entry[16] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 11)) + "\":" + entry[17] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 12)) + "\":" + entry[18] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 13)) + "\":" + entry[19] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 14)) + "\":" + entry[20] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 15)) + "\":" + entry[21] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 16)) + "\":" + entry[22] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 17)) + "\":" + entry[23] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 18)) + "\":" + entry[24] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 29)) + "\":" + entry[25] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 20)) + "\":" + entry[26] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 21)) + "\":" + entry[27] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 22)) + "\":" + entry[28] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 23)) + "\":" + entry[29] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 24)) + "\":" + entry[30] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 25)) + "\":" + entry[31] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 26)) + "\":" + entry[32] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 27)) + "\":" + entry[33] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 28)) + "\":" + entry[34] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 29)) + "\":" + entry[35] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 30)) + "\":" + entry[36] + "}," + "{\"" + Integer.toString(frequencyLow + (frequencyStep * 31)) + "\":" + entry[37] + "}," +
+                            "{\"" + Integer.toString(frequencyLow + (frequencyStep * 32)) + "\":" + entry[38] + "}]}";
                     String integrationJSON = integrationHeader + valuesHeader + valuesBody;
 
                     integrationsList.put(unix, integrationJSON);
